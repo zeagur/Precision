@@ -17,10 +17,10 @@ macro(set_from_environment VARIABLE)
 	endif()
 endmacro()
 
-set_from_environment(CompiledPluginsPath)
-if(NOT DEFINED CompiledPluginsPath)
-	message(FATAL_ERROR "CompiledPluginsPath is not set")
-endif()
+#set_from_environment(CompiledPluginsPath)
+#if(NOT DEFINED CompiledPluginsPath)
+#	message(FATAL_ERROR "CompiledPluginsPath is not set")
+#endif()
 
 option(COPY_OUTPUT "Copy the output of build operations to the game directory" ON)
 option(ENABLE_SKYRIM_SE "Enable support for Skyrim SE in the dynamic runtime feature." ON)
@@ -32,3 +32,5 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 add_subdirectory(src)
 include(cmake/packaging.cmake)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
