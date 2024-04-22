@@ -84,6 +84,7 @@ FetchContent_Declare(
         glm
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(glm)
 
@@ -91,20 +92,22 @@ FetchContent_Declare(
         simpleIni
         GIT_REPOSITORY https://github.com/brofield/simpleini.git
         GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(simpleIni)
 # since the default fetch content SOURCE_DIR isnt working on this one
 set(simpleIni_SOURCE_DIR "${CMAKE_BINARY_DIR}/_deps/simpleini-src")
 include_directories(${simpleIni_SOURCE_DIR})
 
-
 FetchContent_Declare(
         tomlplusplus
         GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
         GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(tomlplusplus)
 
+set(SKSE_SUPPORT_XBYAK ON)
 FetchContent_Declare(
         xbyak
         GIT_REPOSITORY https://github.com/herumi/xbyak.git
@@ -112,22 +115,22 @@ FetchContent_Declare(
         OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(xbyak)
-find_package(xbyak REQUIRED CONFIG)
+include_directories(${xbyak_SOURCE_DIR})
 
 FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v2.x
+        GIT_TAG v1.x
         OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(spdlog)
 find_package(spdlog REQUIRED CONFIG)
 
-
 FetchContent_Declare(
         rapidcsv
         GIT_REPOSITORY https://github.com/d99kris/rapidcsv.git
         GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(rapidcsv)
 set(RAPIDCSV_INCLUDE_DIRS ${rapidcsv_SOURCE_DIR}/src)
@@ -136,9 +139,9 @@ FetchContent_Declare(
         CommonLibSSE
         GIT_REPOSITORY https://github.com/CharmedBaryon/CommonLibSSE-NG.git
         GIT_TAG main
+        OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(CommonLibSSE)
-include_directories(${CommonLibSSE_SOURCE_DIR})
 include(${CommonLibSSE_SOURCE_DIR}/cmake/CommonLibSSE.cmake)
 
 add_commonlibsse_plugin(
@@ -148,6 +151,7 @@ add_commonlibsse_plugin(
         ${VERSION_HEADER}
         "${ROOT_DIR}/.clang-format"
         "${ROOT_DIR}/.editorconfig"
+        "${SOURCE_DIR}/PCH.h"
 )
 
 target_compile_features(
@@ -191,16 +195,15 @@ target_include_directories(
         "${SOURCE_DIR}"
 )
 
-set(SKSE_SUPPORT_XBYAK ON)
-
 target_link_libraries(
         "${PROJECT_NAME}"
         PRIVATE
-        CommonLibSSE::CommonLibSSE
-        spdlog::spdlog
-        glm::glm
+        fmt
+        spdlog
+        glm
+        xbyak
         tomlplusplus::tomlplusplus
-        xbyak::xbyak
+        CommonLibSSE
 )
 
 target_precompile_headers(

@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "render/DrawHandler.h"
+
 #ifdef NDEBUG
 #	include <spdlog/sinks/basic_file_sink.h>
 #else
