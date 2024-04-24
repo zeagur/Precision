@@ -72,7 +72,12 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 #endif
 
 	InitializeLog();
-	logger::info("{} v{}"sv, Plugin::NAME, Plugin::VERSION.string());
+
+	auto* plugin = SKSE::PluginDeclaration::GetSingleton();
+	auto name = plugin->GetName();
+	auto version = plugin->GetVersion();
+
+	logger::info("{} v{}"sv, name, version);
 
 	SKSE::Init(a_skse);
 	SKSE::AllocTrampoline(1 << 10);

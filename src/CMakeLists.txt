@@ -2,6 +2,8 @@ include(FetchContent)
 
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
+
 set(SOURCE_DIR "${ROOT_DIR}/src")
 file(GLOB_RECURSE SOURCE_FILES "${SOURCE_DIR}/*.cpp" "${SOURCE_DIR}/*.h")
 
