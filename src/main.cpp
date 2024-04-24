@@ -103,7 +103,6 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 		Sleep(100);
 	}
 #endif
-	REL::Module::reset();  // Clib-NG bug workaround
 
 	InitializeLog();
 	logger::info("{} v{}"sv, Plugin::NAME, Plugin::VERSION.string());
@@ -130,7 +129,7 @@ extern "C" DLLEXPORT void* SKSEAPI RequestPluginAPI(const PRECISION_API::Interfa
 	GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)retAddr, &hModule);
 
 	if (hModule) {
-		SKSE::PluginVersionData* versionData = (SKSE::PluginVersionData*)SKSE::WinAPI::GetProcAddress(hModule, "SKSEPlugin_Version");
+		SKSE::PluginVersionData* versionData = (SKSE::PluginVersionData*)GetProcAddress(hModule, "SKSEPlugin_Version");
 		if (versionData && versionData->pluginName == "Accuracy"sv && versionData->pluginVersion < 0x20000) {
 			return nullptr;
 		}

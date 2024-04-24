@@ -1,8 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/cmake,visualstudio
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake,visualstudio
 
-.idea
-
 ### CMake ###
 CMakeLists.txt.user
 CMakeCache.txt
@@ -424,3 +422,6 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/cmake,visualstudio
 
 /build
+
+### Idea ###
+.idea

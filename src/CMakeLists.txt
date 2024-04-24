@@ -3,63 +3,7 @@ include(FetchContent)
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 set(SOURCE_DIR "${ROOT_DIR}/src")
-set(SOURCE_FILES
-        "${SOURCE_DIR}/ActiveActor.cpp"
-        "${SOURCE_DIR}/ActiveActor.h"
-        "${SOURCE_DIR}/AttackCollision.cpp"
-        "${SOURCE_DIR}/AttackCollision.h"
-        "${SOURCE_DIR}/AttackTrail.cpp"
-        "${SOURCE_DIR}/AttackTrail.h"
-        "${SOURCE_DIR}/CachedAttackData.h"
-        "${SOURCE_DIR}/Events.cpp"
-        "${SOURCE_DIR}/Events.h"
-        "${SOURCE_DIR}/HitRefs.cpp"
-        "${SOURCE_DIR}/HitRefs.h"
-        "${SOURCE_DIR}/Hooks.cpp"
-        "${SOURCE_DIR}/Hooks.h"
-        "${SOURCE_DIR}/main.cpp"
-        "${SOURCE_DIR}/ModAPI.cpp"
-        "${SOURCE_DIR}/ModAPI.h"
-        "${SOURCE_DIR}/Offsets.h"
-        "${SOURCE_DIR}/Papyrus.cpp"
-        "${SOURCE_DIR}/Papyrus.h"
-        "${SOURCE_DIR}/PCH.h"
-        "${SOURCE_DIR}/PendingHit.cpp"
-        "${SOURCE_DIR}/PendingHit.h"
-        "${SOURCE_DIR}/PrecisionAPI.h"
-        "${SOURCE_DIR}/PrecisionHandler.cpp"
-        "${SOURCE_DIR}/PrecisionHandler.h"
-        "${SOURCE_DIR}/Settings.cpp"
-        "${SOURCE_DIR}/Settings.h"
-        "${SOURCE_DIR}/Utils.cpp"
-        "${SOURCE_DIR}/Utils.h"
-        "${SOURCE_DIR}/Havok/ActiveRagdoll.h"
-        "${SOURCE_DIR}/Havok/Blender.cpp"
-        "${SOURCE_DIR}/Havok/Blender.h"
-        "${SOURCE_DIR}/Havok/ContactListener.cpp"
-        "${SOURCE_DIR}/Havok/ContactListener.h"
-        "${SOURCE_DIR}/Havok/Havok.cpp"
-        "${SOURCE_DIR}/Havok/Havok.h"
-        "${SOURCE_DIR}/render/cbuffer.cpp"
-        "${SOURCE_DIR}/render/cbuffer.h"
-        "${SOURCE_DIR}/render/common.cpp"
-        "${SOURCE_DIR}/render/common.h"
-        "${SOURCE_DIR}/render/d3d_context.cpp"
-        "${SOURCE_DIR}/render/d3d_context.h"
-        "${SOURCE_DIR}/render/DrawHandler.cpp"
-        "${SOURCE_DIR}/render/DrawHandler.h"
-        "${SOURCE_DIR}/render/line_drawer.cpp"
-        "${SOURCE_DIR}/render/line_drawer.h"
-        "${SOURCE_DIR}/render/shader.cpp"
-        "${SOURCE_DIR}/render/shader.h"
-        "${SOURCE_DIR}/render/timer.cpp"
-        "${SOURCE_DIR}/render/timer.h"
-        "${SOURCE_DIR}/render/vertex_buffer.cpp"
-        "${SOURCE_DIR}/render/vertex_buffer.h"
-        "${SOURCE_DIR}/render/shaders/shader_vertex_color.h"
-        "${SOURCE_DIR}/utilities/ITimer.cpp"
-        "${SOURCE_DIR}/utilities/ITimer.h"
-)
+file(GLOB_RECURSE SOURCE_FILES "${SOURCE_DIR}/*.cpp" "${SOURCE_DIR}/*.h")
 
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})
 
@@ -78,8 +22,6 @@ configure_file(
         @ONLY
 )
 
-set(SPDLOG_INSTALL ON)
-
 FetchContent_Declare(
         glm
         GIT_REPOSITORY https://github.com/g-truc/glm.git
@@ -88,52 +30,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
-FetchContent_Declare(
-        simpleIni
-        GIT_REPOSITORY https://github.com/brofield/simpleini.git
-        GIT_TAG master
-        OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(simpleIni)
-# since the default fetch content SOURCE_DIR isnt working on this one
-set(simpleIni_SOURCE_DIR "${CMAKE_BINARY_DIR}/_deps/simpleini-src")
-include_directories(${simpleIni_SOURCE_DIR})
-
-FetchContent_Declare(
-        tomlplusplus
-        GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
-        GIT_TAG master
-        OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(tomlplusplus)
 
 set(SKSE_SUPPORT_XBYAK ON)
-FetchContent_Declare(
-        xbyak
-        GIT_REPOSITORY https://github.com/herumi/xbyak.git
-        GIT_TAG master
-        OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(xbyak)
-include_directories(${xbyak_SOURCE_DIR})
-
-FetchContent_Declare(
-        spdlog
-        GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.x
-        OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(spdlog)
-find_package(spdlog REQUIRED CONFIG)
-
-FetchContent_Declare(
-        rapidcsv
-        GIT_REPOSITORY https://github.com/d99kris/rapidcsv.git
-        GIT_TAG master
-        OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(rapidcsv)
-set(RAPIDCSV_INCLUDE_DIRS ${rapidcsv_SOURCE_DIR}/src)
 
 FetchContent_Declare(
         CommonLibSSE
@@ -151,7 +49,6 @@ add_commonlibsse_plugin(
         ${VERSION_HEADER}
         "${ROOT_DIR}/.clang-format"
         "${ROOT_DIR}/.editorconfig"
-        "${SOURCE_DIR}/PCH.h"
 )
 
 target_compile_features(
@@ -198,12 +95,10 @@ target_include_directories(
 target_link_libraries(
         "${PROJECT_NAME}"
         PRIVATE
-        fmt
-        spdlog
-        glm
-        xbyak
+        CommonLibSSE::CommonLibSSE
+        glm::glm
         tomlplusplus::tomlplusplus
-        CommonLibSSE
+        xbyak::xbyak
 )
 
 target_precompile_headers(
@@ -225,13 +120,3 @@ install(
         DESTINATION "/"
         COMPONENT "pdbs"
 )
-
-#if("${COPY_OUTPUT}")
-#	add_custom_command(
-#		TARGET "${PROJECT_NAME}"
-#		POST_BUILD
-#		COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${CompiledPluginsPath}/SKSE/Plugins/"
-#		COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${CompiledPluginsPath}/SKSE/Plugins/"
-#		VERBATIM
-#	)
-#endif()
