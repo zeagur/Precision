@@ -7,20 +7,7 @@ file(GLOB_RECURSE SOURCE_FILES "${SOURCE_DIR}/*.cpp" "${SOURCE_DIR}/*.h")
 
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})
 
-set(VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/Plugin.h")
-configure_file(
-        "${ROOT_DIR}/cmake/Plugin.h.in"
-        "${VERSION_HEADER}"
-        @ONLY
-)
-
-source_group("src" FILES "${VERSION_HEADER}")
-
-configure_file(
-        "${ROOT_DIR}/cmake/version.rc.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/version.rc"
-        @ONLY
-)
+set(SPDLOG_INSTALL ON)
 
 FetchContent_Declare(
         glm
@@ -30,8 +17,52 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
+FetchContent_Declare(
+        simpleIni
+        GIT_REPOSITORY https://github.com/brofield/simpleini.git
+        GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(simpleIni)
+# since the default fetch content SOURCE_DIR isnt working on this one
+set(simpleIni_SOURCE_DIR "${CMAKE_BINARY_DIR}/_deps/simpleini-src")
+include_directories(${simpleIni_SOURCE_DIR})
+
+FetchContent_Declare(
+        tomlplusplus
+        GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
+        GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(tomlplusplus)
 
 set(SKSE_SUPPORT_XBYAK ON)
+FetchContent_Declare(
+        xbyak
+        GIT_REPOSITORY https://github.com/herumi/xbyak.git
+        GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(xbyak)
+include_directories(${xbyak_SOURCE_DIR})
+
+FetchContent_Declare(
+        spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.x
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(spdlog)
+find_package(spdlog REQUIRED CONFIG)
+
+FetchContent_Declare(
+        rapidcsv
+        GIT_REPOSITORY https://github.com/d99kris/rapidcsv.git
+        GIT_TAG master
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(rapidcsv)
+set(RAPIDCSV_INCLUDE_DIRS ${rapidcsv_SOURCE_DIR}/src)
 
 FetchContent_Declare(
         CommonLibSSE
@@ -46,7 +77,6 @@ add_commonlibsse_plugin(
         "${PROJECT_NAME}"
         SOURCES
         ${SOURCE_FILES}
-        ${VERSION_HEADER}
         "${ROOT_DIR}/.clang-format"
         "${ROOT_DIR}/.editorconfig"
 )
@@ -95,10 +125,11 @@ target_include_directories(
 target_link_libraries(
         "${PROJECT_NAME}"
         PRIVATE
-        CommonLibSSE::CommonLibSSE
+        spdlog::spdlog
         glm::glm
-        tomlplusplus::tomlplusplus
         xbyak::xbyak
+        tomlplusplus::tomlplusplus
+        CommonLibSSE::CommonLibSSE
 )
 
 target_precompile_headers(
